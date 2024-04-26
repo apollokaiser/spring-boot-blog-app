@@ -1,15 +1,11 @@
 package com.training.blog.Entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
 @Entity
 @Table(name="user_token")
 public class User_Token extends BaseEntity {
@@ -24,4 +20,9 @@ public class User_Token extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private Users user;
+    public User_Token(String token, Long expiresAt, Users user) {
+        this.token = token;
+        this.expiresAt = expiresAt;
+        this.user = user;
+    }
 }

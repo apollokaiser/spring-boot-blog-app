@@ -1,11 +1,9 @@
 package com.training.blog.Controller;
 
-import com.training.blog.DAO.User.UserDao;
-import com.training.blog.Entities.Users;
 import com.training.blog.Payload.RegistationRequest;
-import com.training.blog.Service.User.MyUserDetail;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,23 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final UserDao userDao;
+    private final HttpHeaders headers;
     @PostMapping(value = "/register")
     public ResponseEntity<?> register(
             @RequestBody @Valid RegistationRequest register
     ) {
-        MyUserDetail userDetail = (MyUserDetail) userDetailsService.loadUserByUsername(register.getEmail());
-        if(userDetail == null) {
-            userDao.save(Users.builder()
-                    .email(register.getEmail())
-                    .password(passwordEncoder.encode(register.getPassword())
-                    ).build());
-           // to be continue ....
-            return ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
         }
-        else {
-            return ResponseEntity.badRequest().build();
-        }
-    }
 
 }
