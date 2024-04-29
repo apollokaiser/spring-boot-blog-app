@@ -12,4 +12,9 @@
     <li style="font-size:18px; font-weight:500">Nếu người dùng không nhận được mã --> Cho phép ấn gửi mã</li>
     <li style="font-size:18px; font-weight:500">Nếu người dùng đăng nhập bằng tài khoản chưa enable --> Đưa vào trang xác thực</li>
 </ul>
+<h2>sơ đồ chức năng (Controller - Service)</h2>
+<pre>
+register(Authcontroller)-->register(MyUserDetailService)
+-->register(RegisterService) --> sendVerificationMail(RegisterService)
+</pre>
 

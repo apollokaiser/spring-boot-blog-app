@@ -14,10 +14,19 @@ import java.util.List;
 @AllArgsConstructor
 public class TokenDaoImpl implements TokenDao{
     private final TokenRepository repository;
+    private final UserRepository userRepository;
     @Override
     @Transactional
     public void save(User_Token entity) {
+        Users user = userRepository.findByEmail(entity.getUser().getEmail())
+                .orElseThrow( () -> new IllegalStateException("Could not find user"));
+        entity.setUser(user);
+        try {
         repository.save(entity);
+        }catch (Exception e) {
+            System.out.println("Saving Token failed: /n" + e.getMessage());
+          return;
+        }
     }
 
     @Override

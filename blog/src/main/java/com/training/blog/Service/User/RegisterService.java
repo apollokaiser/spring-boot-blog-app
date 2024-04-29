@@ -3,7 +3,10 @@ package com.training.blog.Service.User;
 import com.training.blog.DAO.User.UserDao;
 import com.training.blog.Entities.User_Token;
 import com.training.blog.Entities.Users;
+import com.training.blog.Service.Email.EmailService;
 import com.training.blog.Service.UserToken.TokenService;
+import com.training.blog.Utils.EmailTemplateEngine;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +23,8 @@ public class RegisterService {
     private final UserDao userDao;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final EmailService emailService;
 
     public void register(Users user) {
         boolean isExisted  = userDao.findUsersByEmail(user.getEmail()).isPresent();
@@ -45,8 +50,13 @@ public class RegisterService {
         //save user
         userDao.save(entity);
         //send verification email
+
     }
-    private void sendVerificationEmail(String gmail, String message){
+    private void sendVerificationEmail(String mail,
+                                       String confirmationToken) throws MessagingException {
+        EmailTemplateEngine viewEngine = EmailTemplateEngine.ACTIVATION_ACCOUNT;
+        String subject = "CONFIRM ACCOUNT";
+        emailService.sendActivationAccount(mail,subject,confirmationToken,viewEngine);
 
     }
 

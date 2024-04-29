@@ -29,6 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
            @NonNull HttpServletRequest request,
            @NonNull HttpServletResponse response,
            @NonNull FilterChain filterChain) throws ServletException, IOException {
+        // access login, register, forgot password v.v.. pages --> no action
         if(request.getServletPath().contains("/api/v1/auth/")) {
             filterChain.doFilter(request, response);
             return;
