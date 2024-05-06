@@ -1,9 +1,7 @@
 package com.training.blog.Service.Email;
 
-import com.training.blog.Utils.EmailTemplateEngine;
+import com.training.blog.Enum.EmailTemplateEngine;
 import jakarta.mail.MessagingException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Service;
 
 public interface EmailService {
    public void sendActivationAccount(

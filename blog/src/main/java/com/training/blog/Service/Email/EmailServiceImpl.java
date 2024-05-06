@@ -1,7 +1,7 @@
 package com.training.blog.Service.Email;
 
 
-import com.training.blog.Utils.EmailTemplateEngine;
+import com.training.blog.Enum.EmailTemplateEngine;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,7 @@ public class EmailServiceImpl implements EmailService{
     private final SpringTemplateEngine templateEngine;
     @Override
     @Async
-    public void sendActivationAccount(String to,
-                                      String subject,
-                                      String activationCode,
+    public void sendActivationAccount(String to, String subject, String activationCode,
                                       EmailTemplateEngine emailTemplateEngine) throws MessagingException {
        String template = emailTemplateEngine==null ? "activation_account" : emailTemplateEngine.getName();
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -36,7 +34,8 @@ public class EmailServiceImpl implements EmailService{
                 StandardCharsets.UTF_8.name()
         );
         Map<String, Object> props = new HashMap<>();
-        props.put("activationCode", activationCode);
+        String link = String.format("http://localhost;5173/api/v1/auth/comfirm?c_token=%s", activationCode);
+        props.put("link", link);
         props.put("to", to);
         Context context = new Context();
         context.setVariable("props", props);

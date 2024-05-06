@@ -2,13 +2,16 @@ package com.training.blog.DAO.Token;
 
 import com.training.blog.Entities.User_Token;
 import com.training.blog.Entities.Users;
+import com.training.blog.Exception.CustomException.NotFoundEntityException;
 import com.training.blog.Repositories.TokenRepository;
 import com.training.blog.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.NotAcceptableStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @AllArgsConstructor
@@ -19,14 +22,9 @@ public class TokenDaoImpl implements TokenDao{
     @Transactional
     public void save(User_Token entity) {
         Users user = userRepository.findByEmail(entity.getUser().getEmail())
-                .orElseThrow( () -> new IllegalStateException("Could not find user"));
+                .orElseThrow( () -> new NotAcceptableStatusException("Could not find user"));
         entity.setUser(user);
-        try {
         repository.save(entity);
-        }catch (Exception e) {
-            System.out.println("Saving Token failed: /n" + e.getMessage());
-          return;
-        }
     }
 
     @Override
@@ -37,5 +35,19 @@ public class TokenDaoImpl implements TokenDao{
     @Override
     public void update(User_Token entity) {
         // not use this method (may be)
+    }
+
+    @Override
+    @Transactional
+    public Optional<User_Token> findByToken(String token) {
+        return repository.findByToken(token);
+    }
+
+    @Override
+    public void validatedToken(User_Token token) {
+       User_Token user_token = repository.findByToken(token.getToken()).orElseThrow(()->
+               new NotFoundEntityException("Token not found"));
+       user_token.setValidatesAt(System.currentTimeMillis());
+       repository.save(user_token);
     }
 }

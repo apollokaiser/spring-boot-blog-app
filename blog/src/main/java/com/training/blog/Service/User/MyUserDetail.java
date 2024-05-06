@@ -11,7 +11,6 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class MyUserDetail implements UserDetails, Principal {
     private final Users user;

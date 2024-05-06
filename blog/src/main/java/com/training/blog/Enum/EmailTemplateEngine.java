@@ -1,4 +1,4 @@
-package com.training.blog.Utils;
+package com.training.blog.Enum;
 
 import lombok.Getter;
 
@@ -6,7 +6,8 @@ import lombok.Getter;
 public enum EmailTemplateEngine {
     ACTIVATION_ACCOUNT("activation_account"),
     RESET_PASSWORD("reset_password");
-    private String name;
+
+    private final String name;
     EmailTemplateEngine( String name){
         this.name = name;
     }

@@ -8,9 +8,9 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "users")
 public class Users extends BaseEntity{
@@ -32,11 +32,12 @@ public class Users extends BaseEntity{
     private String intro;
     @Column(name="profile" ,columnDefinition = "TEXT")
     private String profile;
-    @Column(name="enable" ,columnDefinition = "TINYINT")
-    private boolean enabled = false;
+    @Column(name="enable" ,columnDefinition = "BIT")
+    private boolean enabled;
     @Transient
     private String name;
-    public String getName(){
+    public String getFullName()
+    {
         return this.firstName + " " + this.lastName;
     }
     @OneToMany(mappedBy="user")

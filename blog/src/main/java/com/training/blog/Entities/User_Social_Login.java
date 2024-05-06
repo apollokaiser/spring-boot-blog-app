@@ -18,7 +18,6 @@ public class User_Social_Login extends BaseEntity{
     private Long expires_in;
     @ManyToOne
     @JoinColumn(name = "user_id",
-            referencedColumnName = "user_id",
-            foreignKey = @ForeignKey(name = "fk_user_user_social_login"))
+            referencedColumnName = "user_id")
     private Users user;
 }

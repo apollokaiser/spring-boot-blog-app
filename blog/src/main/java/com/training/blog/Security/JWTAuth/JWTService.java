@@ -37,10 +37,10 @@ public class JWTService {
                     .map(GrantedAuthority::getAuthority).toList();
             claims.put("roles",roles);
             return Jwts.builder()
-                    .claims(claims)
-                    .subject(userDetail.getUsername())
-                    .issuedAt(date)
-                    .expiration(expirationDate)
+                    .setClaims(claims)
+                    .setSubject(userDetail.getUsername())
+                    .setIssuedAt(date)
+                    .setExpiration(expirationDate)
                     .signWith(getSecrectKey())
                     .compact();
         }
@@ -59,11 +59,11 @@ public class JWTService {
         Claims claims;
         SecretKey secretKey = (SecretKey) getSecrectKey();
         try {
-           claims = Jwts.parser()
-                   .verifyWith(secretKey)
+           claims = Jwts.parserBuilder()
+                   .setSigningKey(secretKey)
                    .build()
-                   .parseSignedClaims(token)
-                   .getPayload();
+                   .parseClaimsJwt(token)
+                   .getBody();
         }catch (Exception e){
                 claims = null;
         }

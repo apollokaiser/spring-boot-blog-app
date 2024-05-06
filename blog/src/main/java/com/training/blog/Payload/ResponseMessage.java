@@ -15,4 +15,5 @@ public class ResponseMessage {
     private HttpStatus status;
     private String message;
     private Map<String, Object> data;
+    private String description;
 }

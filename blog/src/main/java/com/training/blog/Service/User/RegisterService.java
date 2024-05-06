@@ -4,10 +4,10 @@ import com.training.blog.DAO.User.UserDao;
 import com.training.blog.Entities.User_Token;
 import com.training.blog.Entities.Users;
 import com.training.blog.Service.Email.EmailService;
-import com.training.blog.Service.UserToken.TokenService;
-import com.training.blog.Utils.EmailTemplateEngine;
+import com.training.blog.Enum.EmailTemplateEngine;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityExistsException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,8 @@ public class RegisterService {
     private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
-
-    public void register(Users user) {
+    @Transactional
+    public void register(Users user) throws MessagingException {
         boolean isExisted  = userDao.findUsersByEmail(user.getEmail()).isPresent();
         if (isExisted) throw new EntityExistsException("User already registered");
        // Create user
@@ -50,6 +50,7 @@ public class RegisterService {
         //save user
         userDao.save(entity);
         //send verification email
+        sendVerificationEmail(user.getEmail(), verificationToken);
 
     }
     private void sendVerificationEmail(String mail,
