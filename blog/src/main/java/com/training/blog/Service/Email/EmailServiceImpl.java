@@ -26,7 +26,7 @@ public class EmailServiceImpl implements EmailService{
     @Async
     public void sendActivationAccount(String to, String subject, String activationCode,
                                       EmailTemplateEngine emailTemplateEngine) throws MessagingException {
-       String template = emailTemplateEngine==null ? "activation_account" : emailTemplateEngine.getName();
+       String template = emailTemplateEngine == null ? "activation_account" : emailTemplateEngine.getName();
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(
                 mimeMessage,
@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService{
                 StandardCharsets.UTF_8.name()
         );
         Map<String, Object> props = new HashMap<>();
-        String link = String.format("http://localhost;5173/api/v1/auth/comfirm?c_token=%s", activationCode);
+        String link = String.format("http://localhost:5173/auth/comfirm?c_token=%s", activationCode);
         props.put("link", link);
         props.put("to", to);
         Context context = new Context();

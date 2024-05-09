@@ -19,11 +19,5 @@ public class BaseEntity {
     private Long createdAt;
     @LastModifiedDate
     private Long modifiedAt;
-    @ManyToOne
-    @JoinColumn(name = "created_by")
-    private Users createBy;
-    @LastModifiedBy
-    @ManyToOne
-    @JoinColumn(name = "modified_by")
-    private Users modifiedBy;
 }
+

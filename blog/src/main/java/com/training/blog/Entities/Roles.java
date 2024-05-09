@@ -20,10 +20,6 @@ public class Roles extends BaseEntity {
     private int id;
     @Column(name="role", unique = true)
     private String role;
-    @ManyToMany()
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName ="user_id"))
-    @JsonIgnore
+    @ManyToMany(mappedBy = "roles")
     private Set<Users> users;
 }

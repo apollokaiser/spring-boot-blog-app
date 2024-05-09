@@ -7,6 +7,7 @@ import com.training.blog.Repositories.UserRepository;
 import com.training.blog.Exception.CustomException.NotFoundEntityException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class UserDaoImpl implements UserDao {
 
     private final UserRepository userRepository;
@@ -25,10 +27,10 @@ public class UserDaoImpl implements UserDao {
             Roles role = roleDao.findRolesByRole("ROLE_USER");
            if (role == null) throw new NullPointerException("Role not found in role collection");
         if(entity == null)
-            throw new NullPointerException("entity is null");
-        entity.setRoles(new HashSet<Roles>() {{
-            add(role);
-        }});
+            throw new NullPointerException("Saving user account have an issue that entity is null");
+        HashSet<Roles> roles = new HashSet<Roles>();
+        roles.add(role);
+        entity.setRoles(roles);
         userRepository.save(entity);
     }
 
@@ -45,7 +47,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void validatedUser(String email) {
         Users user  = userRepository.findByEmail(email)
-                .orElseThrow( () -> new NotFoundEntityException("User not found"));
+                .orElseThrow( () -> new NotFoundEntityException("User not found", Users.class));
         user.setEnabled(true);
         userRepository.save(user);
     }

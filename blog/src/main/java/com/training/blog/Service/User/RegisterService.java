@@ -25,7 +25,7 @@ public class RegisterService {
     private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
-    @Transactional
+    @Transactional(rollbackOn = MessagingException.class)
     public void register(Users user) throws MessagingException {
         boolean isExisted  = userDao.findUsersByEmail(user.getEmail()).isPresent();
         if (isExisted) throw new EntityExistsException("User already registered");
@@ -42,9 +42,8 @@ public class RegisterService {
                 .expiresAt(System.currentTimeMillis() + 3600000)
                 .user(entity)
                 .build();
-        Set<User_Token> tokens = new HashSet<>(){{
-            add(token);
-        }};
+        HashSet<User_Token> tokens = new HashSet<>();
+        tokens.add(token);
         // add token for user
         entity.setTokens(tokens);
         //save user

@@ -42,8 +42,13 @@ public class Users extends BaseEntity{
     }
     @OneToMany(mappedBy="user")
     private Set<User_Social_Login> accounts;
-    @OneToMany(mappedBy="user")
+
+    @OneToMany(mappedBy="user", cascade = {CascadeType.PERSIST})
     private Set<User_Token> tokens;
-    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName ="role_id"))
     private Set<Roles> roles;
 }
