@@ -2,6 +2,7 @@ package com.training.blog.Service.User;
 
 import com.training.blog.Entities.Users;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +12,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Getter
 @AllArgsConstructor
 public class MyUserDetail implements UserDetails, Principal {
     private final Users user;

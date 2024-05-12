@@ -23,23 +23,21 @@ public class JWTService {
     private String secret;
     @Value("${application.security.jwt.expiration}")
     private Long expiration;
-    public String generateToken(UserDetails userDetail){
+    public String generateToken(Map<String, Object> extraClaims,UserDetails userDetail){
         if(userDetail==null) return "";
         else {
             Date date = new Date(System.currentTimeMillis());
             Date expirationDate = new Date(date.getTime() + expiration);
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("email", userDetail.getUsername());
             var roles = userDetail.getAuthorities()
                     .stream()
                     .map(GrantedAuthority::getAuthority).toList();
-            claims.put("roles",roles);
             return Jwts.builder()
-                    .setClaims(claims)
+                    .setClaims(extraClaims)
                     .setSubject(userDetail.getUsername())
                     .setIssuer("training.blog.com")
                     .setIssuedAt(date)
                     .setExpiration(expirationDate)
+                    .claim("roles", roles)
                     .signWith(getSecrectKey())
                     .compact();
         }

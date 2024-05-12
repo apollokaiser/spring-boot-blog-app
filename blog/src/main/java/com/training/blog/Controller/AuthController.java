@@ -1,10 +1,12 @@
 package com.training.blog.Controller;
 
 import com.training.blog.Entities.Users;
+import com.training.blog.Payload.ResetPasswordRequest;
 import com.training.blog.Payload.UserCredentialsRequest;
 import com.training.blog.Payload.ResponseMessage;
 import com.training.blog.Service.User.RegisterService;
 import com.training.blog.Service.User.UserService;
+import com.training.blog.Service.UserToken.TokenService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,8 +26,11 @@ public class AuthController {
 
     private final HttpHeaders headers;
 
+    private final TokenService tokenService;
+
     @PostMapping(value = "/register")
-    public ResponseEntity<ResponseMessage> register(@RequestBody @Valid UserCredentialsRequest register) throws MessagingException {
+    public ResponseEntity<ResponseMessage> register(
+            @RequestBody @Valid UserCredentialsRequest register) throws MessagingException {
         registerService.register(Users.builder()
                         .email(register.getEmail())
                         .password(register.getPassword())
@@ -36,17 +41,31 @@ public class AuthController {
                 .build();
         return new ResponseEntity<>(message, headers, HttpStatus.OK);
         }
-        @GetMapping(value="/authentication", params = {"c_token"})
+        @GetMapping(value="/authentication", params = {"token"})
         public ResponseEntity<?> validateAccount(
-                @RequestParam(value = "c_token", required = true) String token){
-            //TODO: CODING BUSINESS LOGICAL FOR VALIDATE ACCOUNT
+                @RequestParam(value = "token", required = true) String token){
+            tokenService.validateUserToken(token);
             return ResponseEntity.ok().build();
         }
         @PostMapping(value="/login")
-    public ResponseEntity<ResponseMessage> login(@RequestBody @Valid UserCredentialsRequest login){
+    public ResponseEntity<ResponseMessage> login(
+            @RequestBody @Valid UserCredentialsRequest login){
            ResponseMessage response =  userService.login(login);
         return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
+    @GetMapping(value = "/reset-password")
+    public ResponseEntity<ResponseMessage> resetPassword(
+            @RequestBody @Valid String email ) throws MessagingException {
+            ResponseMessage response =  userService.resetPassword(email);
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
+    }
+    @PostMapping(value = "/reset-password")
+    public ResponseEntity<ResponseMessage> resetPassword(
+            @RequestBody @Valid ResetPasswordRequest request ) {
+            ResponseMessage response =  userService.resetPassword(request);
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
+    }
+
 
 
 }

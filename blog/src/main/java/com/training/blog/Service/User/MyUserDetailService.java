@@ -15,7 +15,6 @@ import java.util.Map;
 public class MyUserDetailService implements UserDetailsService {
 
     private final UserDao userDao;
-    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

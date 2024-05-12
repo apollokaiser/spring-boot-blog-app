@@ -9,4 +9,9 @@ public interface EmailService {
             String subject,
             String activationCode,
             EmailTemplateEngine emailTemplateEngine) throws MessagingException;
+   public void sendResetPasswordCode(
+           String to,
+           String subject,
+           String resetPasswordCode,
+           EmailTemplateEngine emailTemplateEngine) throws MessagingException;
 }

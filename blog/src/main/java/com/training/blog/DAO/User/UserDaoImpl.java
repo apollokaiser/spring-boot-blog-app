@@ -51,6 +51,17 @@ public class UserDaoImpl implements UserDao {
         user.setEnabled(true);
         userRepository.save(user);
     }
+
+    @Override
+    public void resetPassword(String email, String newPassword) {
+        if(email.isEmpty()) throw new NullPointerException(("email is empty"));
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(()->
+                        new NotFoundEntityException("User not found", Users.class));
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
     @Override
     public void delete(List<Long> ids) {
 

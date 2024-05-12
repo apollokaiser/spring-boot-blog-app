@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService{
                 StandardCharsets.UTF_8.name()
         );
         Map<String, Object> props = new HashMap<>();
-        String link = String.format("http://localhost:5173/auth/comfirm?c_token=%s", activationCode);
+        String link = String.format("http://localhost:5173/auth/confirm?token=%s", activationCode);
         props.put("link", link);
         props.put("to", to);
         Context context = new Context();
@@ -45,4 +45,28 @@ public class EmailServiceImpl implements EmailService{
         helper.setText(templateEngine.process(template, context), true);
         javaMailSender.send(mimeMessage);
     }
+
+    @Override
+    public void sendResetPasswordCode(String to, String subject,
+                                      String resetPasswordCode,
+                                      EmailTemplateEngine emailTemplateEngine) throws MessagingException {
+        String template = emailTemplateEngine.getName() ==null ? "reset_password" : emailTemplateEngine.getName();
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(
+                mimeMessage,
+                MimeMessageHelper.MULTIPART_MODE_MIXED,
+                StandardCharsets.UTF_8.name()
+        );
+        Map<String, Object> props = new HashMap<>();
+        props.put("code", resetPasswordCode);
+        props.put("to", to);
+        Context context = new Context();
+        context.setVariable("props", props);
+        helper.setFrom("ngothinh123147@gmail.com");
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(templateEngine.process(template, context), true);
+        javaMailSender.send(mimeMessage);
+    }
+
 }

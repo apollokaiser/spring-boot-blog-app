@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface UserDao extends GenericDao<Users, Long> {
     Optional<Users> findUsersByEmail(String email);
     void validatedUser(String email) throws NotFoundEntityException;
+    void resetPassword(String email, String newPassword);
 }
