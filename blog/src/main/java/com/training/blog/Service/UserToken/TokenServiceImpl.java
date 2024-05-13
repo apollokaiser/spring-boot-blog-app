@@ -1,16 +1,19 @@
 package com.training.blog.Service.UserToken;
 
 import com.training.blog.DAO.Token.TokenDao;
+import com.training.blog.DAO.User.UserDao;
 import com.training.blog.Entities.User_Token;
 import com.training.blog.Exception.CustomException.NotFoundEntityException;
 import com.training.blog.Exception.CustomException.TokenExpiredException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
+@Lazy
 @AllArgsConstructor
 public class TokenServiceImpl implements TokenService{
     private final TokenDao tokenDao;
@@ -26,13 +29,12 @@ public class TokenServiceImpl implements TokenService{
 
     @Override
     @Transactional
-    public void validateUserToken(String token) {
-        User_Token user_token = tokenDao.findByToken(token).orElseThrow(()->
-                new NotFoundEntityException("Token not found", User_Token.class));
-        Date expiration = new Date(user_token.getExpiresAt());
-        if(expiration.before(new Date())){
-            throw new TokenExpiredException("Token has expired");
-        }
-       tokenDao.validatedToken(user_token);
+    public String validateUserToken(String token) {
+        return tokenDao.validatedToken(token);
+    }
+
+    @Override
+    public void validateResetPasswordToken(String email, String token) {
+       tokenDao.validateResetPasswordToken(email, token);
     }
 }

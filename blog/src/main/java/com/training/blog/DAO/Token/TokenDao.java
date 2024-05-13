@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface TokenDao extends GenericDao<User_Token, Long> {
     Optional<User_Token> findByToken(String token);
-    void validatedToken(User_Token token);
+    String validatedToken(String token);
+    void validateResetPasswordToken(String email, String token);
 }

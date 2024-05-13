@@ -3,13 +3,16 @@ package com.training.blog.DAO.Token;
 import com.training.blog.DAO.User.UserDao;
 import com.training.blog.Entities.User_Token;
 import com.training.blog.Entities.Users;
+import com.training.blog.Exception.CustomException.DataNotMatchException;
 import com.training.blog.Exception.CustomException.NotFoundEntityException;
+import com.training.blog.Exception.CustomException.TokenExpiredException;
 import com.training.blog.Repositories.TokenRepository;
 import com.training.blog.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,11 +52,27 @@ public class TokenDaoImpl implements TokenDao{
 
     @Override
     @Transactional
-    public void validatedToken(User_Token token) {
-       User_Token user_token = repository.findByToken(token.getToken()).orElseThrow(()->
+    public String validatedToken(String token) {
+       User_Token user_token = repository.findByToken(token).orElseThrow(()->
                new NotFoundEntityException("Token not found", User_Token.class));
+        Date expiration = new Date(user_token.getExpiresAt());
+        if(expiration.before(new Date())){
+            throw new TokenExpiredException("Token has expired");
+        }
        user_token.setValidatesAt(System.currentTimeMillis());
        repository.save(user_token);
-       userDao.validatedUser(user_token.getUser().getEmail());
+       return user_token.getUser().getEmail();
     }
+
+    @Override
+    @Transactional
+    public void validateResetPasswordToken(String email, String token) {
+        User_Token user_token = repository.findByToken(token).orElseThrow(()->
+                new NotFoundEntityException("Token not found", User_Token.class));
+        // check email and token
+        if(!email.equals(user_token.getUser().getEmail()))
+            throw new DataNotMatchException("Email and token is invalid");
+       validatedToken(token);
+    }
+
 }

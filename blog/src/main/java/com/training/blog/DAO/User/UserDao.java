@@ -10,4 +10,5 @@ public interface UserDao extends GenericDao<Users, Long> {
     Optional<Users> findUsersByEmail(String email);
     void validatedUser(String email) throws NotFoundEntityException;
     void resetPassword(String email, String newPassword);
+    void changePassword(String email, String newPassword);
 }

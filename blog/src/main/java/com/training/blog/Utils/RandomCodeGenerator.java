@@ -1,5 +1,6 @@
 package com.training.blog.Utils;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -7,6 +8,7 @@ import java.util.Random;
 import java.util.UUID;
 
 @Service
+@Lazy
 public class RandomCodeGenerator {
     public String generateRandomCode(int length) {
         Random random = new Random();

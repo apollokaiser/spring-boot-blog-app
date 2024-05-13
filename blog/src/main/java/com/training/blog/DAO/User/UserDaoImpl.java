@@ -3,6 +3,7 @@ package com.training.blog.DAO.User;
 import com.training.blog.DAO.Role.RoleDao;
 import com.training.blog.Entities.Roles;
 import com.training.blog.Entities.Users;
+import com.training.blog.Exception.CustomException.NoChangeException;
 import com.training.blog.Repositories.UserRepository;
 import com.training.blog.Exception.CustomException.NotFoundEntityException;
 import jakarta.transaction.Transactional;
@@ -58,12 +59,24 @@ public class UserDaoImpl implements UserDao {
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(()->
                         new NotFoundEntityException("User not found", Users.class));
+        if(user.getPassword().equals(newPassword))
+            throw new NoChangeException("New password cannot be same with old password", Users.class);
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(String email, String newPassword) {
+        Users user = userRepository.findByEmail(email)
+                .orElseThrow(()->
+                        new NotFoundEntityException("User not found", Users.class));
+        if(user.getPassword().equals(newPassword))
+            throw new NoChangeException("New password cannot be same with old password", Users.class);
         user.setPassword(newPassword);
         userRepository.save(user);
     }
 
     @Override
     public void delete(List<Long> ids) {
-
     }
 }
