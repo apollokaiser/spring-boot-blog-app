@@ -1,21 +1,17 @@
 package com.training.blog.Exception.ExceptionHandler;
 
-import com.training.blog.Entities.User_Token;
-import com.training.blog.Entities.Users;
-import com.training.blog.Exception.CustomException.NotFoundEntityException;
-import com.training.blog.Exception.CustomException.PasswordErrorException;
-import com.training.blog.Exception.CustomException.TokenExpiredException;
-import com.training.blog.Payload.ResponseMessage;
-import jakarta.mail.MessagingException;
+import com.training.blog.Enum.BusinessHttpCode;
+import com.training.blog.Exception.CustomException.AppException;
+import com.training.blog.Payload.Response.ResponseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.security.authentication.LockedException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.training.blog.Enum.BusinessErrorCode.*;
+import static com.training.blog.Enum.BusinessHttpCode.*;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestControllerAdvice
@@ -24,87 +20,33 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LockedException.class)
    public ResponseEntity<ResponseMessage> handleException(LockedException ex){
         ResponseMessage message =
-                ResponseMessage.builder()
-                        .status(USER_NOT_ACTIVATED.getStatus())
-                        .description(USER_NOT_ACTIVATED.getDescription())
-                        .message(ex.getMessage())
+                ResponseMessage.errorBuilder()
+                        .errorCode(USER_NOT_ACTIVATED)
                         .build();
         return ResponseEntity
                 .status(OK)
                 .body(message);
     }
-    @ExceptionHandler(NotFoundEntityException.class)
-    public ResponseEntity<ResponseMessage> handleException(NotFoundEntityException ex){
-        ResponseMessage message = null;
-        if(ex.getErrorEntity() == Users.class){
-            message = ResponseMessage.builder()
-                    .status(USER_NOT_FOUND.getStatus())
-                    .description(USER_NOT_FOUND.getDescription())
-                    .message(ex.getMessage())
-                    .build();
-        }
-        if(ex.getErrorEntity() == User_Token.class){
-            message = ResponseMessage.builder()
-                    .status(INVALID_TOKEN.getStatus())
-                    .description(INVALID_TOKEN.getDescription())
-                    .message(ex.getMessage())
-                    .build();
-        }
-        return ResponseEntity.status(OK).body(message);
-    }
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ResponseMessage> handleException(UsernameNotFoundException ex){
-        ResponseMessage message = ResponseMessage.builder()
-                .status(USER_NOT_FOUND.getStatus())
-                .description(USER_NOT_FOUND.getDescription())
-                .message(ex.getMessage())
-                .build();
-        return ResponseEntity.status(OK).body(message);
-    }
-    @ExceptionHandler(MessagingException.class)
-    public ResponseEntity<ResponseMessage> handleException(MessagingException ex){
-        ResponseMessage message = ResponseMessage.builder()
-                .status(ERROR_MAIL.getStatus())
-                .description(ERROR_MAIL.getDescription())
+
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ResponseMessage> handleException(AppException ex){
+        ResponseMessage message = ResponseMessage.errorBuilder()
+                .errorCode(ex.getErrorCode())
                 .message(ex.getMessage())
                 .build();
         return ResponseEntity
-                .status(OK)
-                .body(message);
+               .status(OK)
+               .body(message);
     }
-    @ExceptionHandler(PasswordErrorException.class)
-    public ResponseEntity<ResponseMessage> handleException(PasswordErrorException ex){
-        ResponseMessage message = ResponseMessage.builder()
-                .status(WRONG_PASSWORD.getStatus())
-                .description(WRONG_PASSWORD.getDescription())
-                .message(ex.getMessage())
-                .build();
+
+    @ExceptionHandler(MailException.class)
+    public ResponseEntity<ResponseMessage> handleException(MailException ex){
+        ResponseMessage message = ResponseMessage.errorBuilder()
+               .errorCode(ERROR_MAIL)
+               .build();
         return ResponseEntity
-                .status(OK)
-                .body(message);
-    }
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ResponseMessage> handleException(NullPointerException ex){
-        ResponseMessage message =
-                ResponseMessage.builder()
-                        .status(NULL_DATA.getStatus())
-                        .description(NULL_DATA.getDescription())
-                        .message(ex.getMessage())
-                        .build();
-        return ResponseEntity
-                .status(OK)
-                .body(message);
-    }
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<ResponseMessage> handleException(TokenExpiredException ex){
-        ResponseMessage message = ResponseMessage.builder()
-                .status(EXPIRED_TOKEN.getStatus())
-                .description(EXPIRED_TOKEN.getDescription())
-                .message(ex.getMessage())
-                .build();
-        return ResponseEntity
-                .status(OK)
-                .body(message);
+               .status(OK)
+               .body(message);
     }
 
     @ExceptionHandler(Exception.class)
@@ -113,7 +55,6 @@ public class GlobalExceptionHandler {
        ResponseMessage message = ResponseMessage.builder()
                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .message(e.getMessage())
-                                .description(e.getClass().getSimpleName())
                                 .build();
         return ResponseEntity.status(OK).body(message);
     }

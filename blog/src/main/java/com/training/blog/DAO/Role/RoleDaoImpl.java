@@ -18,8 +18,8 @@ public class RoleDaoImpl implements RoleDao{
     }
 
     @Override
-    public void save(Roles entity) {
-
+    public Roles save(Roles entity) {
+        return null;
     }
 
     @Override

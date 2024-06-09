@@ -3,6 +3,8 @@ package com.training.blog.DAO.User;
 import com.training.blog.DAO.Role.RoleDao;
 import com.training.blog.Entities.Roles;
 import com.training.blog.Entities.Users;
+import com.training.blog.Enum.BusinessHttpCode;
+import com.training.blog.Exception.CustomException.AppException;
 import com.training.blog.Exception.CustomException.NoChangeException;
 import com.training.blog.Repositories.UserRepository;
 import com.training.blog.Exception.CustomException.NotFoundEntityException;
@@ -15,24 +17,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static com.training.blog.Enum.BusinessHttpCode.USER_NOT_FOUND;
+
 @Repository
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class UserDaoImpl implements UserDao {
 
     private final UserRepository userRepository;
     private final RoleDao roleDao;
+
     @Override
     @Transactional
-    public void save(Users entity) {
+    public Users save(Users entity) {
             Roles role = roleDao.findRolesByRole("ROLE_USER");
-           if (role == null) throw new NullPointerException("Role not found in role collection");
-        if(entity == null)
-            throw new NullPointerException("Saving user account have an issue that entity is null");
-        HashSet<Roles> roles = new HashSet<Roles>();
-        roles.add(role);
+        HashSet<Roles> roles = new HashSet<Roles>(){{ add(role); }};
         entity.setRoles(roles);
-        userRepository.save(entity);
+        return userRepository.save(entity);
     }
 
     @Override
@@ -46,21 +48,23 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<Users> findUserById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
     public void validatedUser(String email) {
         Users user  = userRepository.findByEmail(email)
-                .orElseThrow( () -> new NotFoundEntityException("User not found", Users.class));
+                .orElseThrow( () -> new AppException(USER_NOT_FOUND));
         user.setEnabled(true);
         userRepository.save(user);
     }
 
     @Override
     public void resetPassword(String email, String newPassword) {
-        if(email.isEmpty()) throw new NullPointerException(("email is empty"));
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(()->
-                        new NotFoundEntityException("User not found", Users.class));
-        if(user.getPassword().equals(newPassword))
-            throw new NoChangeException("New password cannot be same with old password", Users.class);
+                        new AppException(USER_NOT_FOUND));
         user.setPassword(newPassword);
         userRepository.save(user);
     }
@@ -69,11 +73,20 @@ public class UserDaoImpl implements UserDao {
     public void changePassword(String email, String newPassword) {
         Users user = userRepository.findByEmail(email)
                 .orElseThrow(()->
-                        new NotFoundEntityException("User not found", Users.class));
-        if(user.getPassword().equals(newPassword))
-            throw new NoChangeException("New password cannot be same with old password", Users.class);
+                        new AppException(USER_NOT_FOUND));
         user.setPassword(newPassword);
         userRepository.save(user);
+    }
+
+    @Override
+    public Optional<Users> getUsersByRefreshToken(String token) {
+       return userRepository.findUsersByRefreshToken(token);
+    }
+
+    @Override
+    @Transactional
+    public void saveRefreshToken(Users user,String refreshToken) {
+
     }
 
     @Override

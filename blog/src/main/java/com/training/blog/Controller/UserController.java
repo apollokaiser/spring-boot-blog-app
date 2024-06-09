@@ -1,7 +1,7 @@
 package com.training.blog.Controller;
 
-import com.training.blog.Payload.RePasswordRequest;
-import com.training.blog.Payload.ResponseMessage;
+import com.training.blog.Payload.Request.RePasswordRequest;
+import com.training.blog.Payload.Response.ResponseMessage;
 import com.training.blog.Service.User.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

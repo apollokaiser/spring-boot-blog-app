@@ -3,9 +3,7 @@ package com.training.blog.Utils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Random;
-import java.util.UUID;
 
 @Service
 @Lazy
@@ -17,10 +15,5 @@ public class RandomCodeGenerator {
             code.append(random.nextInt(10));
         }
         return code.toString();
-    }
-    public String generateUUID() {
-        String UUIDCode = UUID.randomUUID().toString();
-        String code = UUIDCode + "-" + System.currentTimeMillis();
-        return code;
     }
 }

@@ -34,6 +34,13 @@ public class Users extends BaseEntity{
     private String profile;
     @Column(name="enable" ,columnDefinition = "BIT")
     private boolean enabled;
+
+    @OneToOne(cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            mappedBy = "user",
+            fetch = FetchType.EAGER)
+
+    private RefreshToken refreshToken;
     @Transient
     private String name;
     public String getFullName()
@@ -41,7 +48,7 @@ public class Users extends BaseEntity{
         return this.firstName + " " + this.lastName;
     }
     @OneToMany(mappedBy="user")
-    private Set<User_Social_Login> accounts;
+    private Set<ExternalUserAccount> accounts;
 
     @OneToMany(mappedBy="user", cascade = {CascadeType.PERSIST})
     private Set<User_Token> tokens;

@@ -22,16 +22,15 @@ public class TokenDaoImpl implements TokenDao{
 
     private final TokenRepository repository;
     private final UserRepository userRepository;
-    private final UserDao userDao;
 
     @Override
     @Transactional
-    public void save(User_Token entity) {
+    public User_Token save(User_Token entity) {
         Users user = userRepository.findByEmail(entity.getUser().getEmail())
                 .orElseThrow( () ->
                         new NotFoundEntityException("Could not find user", Users.class));
         entity.setUser(user);
-        repository.save(entity);
+       return repository.save(entity);
     }
 
     @Override

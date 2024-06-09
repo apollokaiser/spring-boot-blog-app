@@ -1,4 +1,4 @@
-package com.training.blog.Payload;
+package com.training.blog.Payload.Request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
